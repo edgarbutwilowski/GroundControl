@@ -1,0 +1,85 @@
+﻿@page "/"
+
+<PageTitle>Ground Control</PageTitle>
+
+<h1 style="color: grey;">Ground Control</h1>
+<RadzenButton Text="STOP" Click="@onClick"></RadzenButton>
+
+<RadzenRow class="rz-text-align-center rz-border-info-light" Gap="1rem">
+    <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
+        <p>Luftdruck (hPa)</p>
+        <RadzenChart @ref="testChart">
+            <RadzenLineSeries Data="@testData" ValueProperty="Value" CategoryProperty="Seconds"
+                LineType="LineType.Dashed" Smooth="true">
+                <RadzenMarkers MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="false" />
+            </RadzenLineSeries>
+        </RadzenChart>
+    </RadzenColumn>
+    <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
+        <p>Temperatur (°C)</p>
+    </RadzenColumn>
+    <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
+        <p>H&ouml;he &uuml;ber Boden (m)</p>
+    </RadzenColumn>
+    <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
+        <p>Aufstiegsgeschwindigkeit (km/h)</p>
+    </RadzenColumn>
+</RadzenRow>
+
+(@counting) - testdatalist: @foreach (var testD in testData)
+{
+    <span>[ @testD.Seconds :&nbsp; @testD.Value ]&nbsp;</span>
+}
+
+@code {
+    int counting = 0;
+    RadzenChart testChart;
+    List<FlightDataItem> testData = new List<FlightDataItem>();
+
+    public Index()
+    {
+        testData.Add(new FlightDataItem { Seconds = 1, Value = 4.0 });
+        testData.Add(new FlightDataItem { Seconds = 2, Value = 8.0 });
+        testData.Add(new FlightDataItem { Seconds = 3, Value = 10.0 });
+    }
+
+    int sec = 3;
+    double val = 10.0;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+        if (firstRender)
+        {
+
+
+            while (sec < 10)
+            {
+                counting++;
+                sec++;
+                val += new Random().Next(10);
+                testData.Add(new FlightDataItem
+                    {
+                        Seconds = sec,
+                        Value = val
+                    });
+                testChart.Reload();
+                testChart.Visible = true;
+                InvokeAsync(() => StateHasChanged());
+                Thread.Sleep(500);
+            }
+
+        }
+
+        base.OnAfterRender(firstRender);
+    }
+
+
+
+    void onClick()
+    {
+        counting++;
+    }
+}
+
