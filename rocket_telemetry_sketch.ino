@@ -1,37 +1,41 @@
-#include <Adafruit_Sensor.h>
-#include "Adafruit_BMP3XX.h"
+#include <Adafruit_BMP280.h>
+#include <SPI.h>
+#include <LoRa.h>
 
-Adafruit_BMP3XX bmp388;
+Adafruit_BMP280 bmp280;
 
 void setup() {
   Serial.begin(9600);
   while(!Serial){}
   Serial.println("Serial port ready");
-  while(!bmp388.begin_I2C()){
-    Serial.println("Serial NOT working");
+  while(!LoRa.begin(868E6)){
+    Serial.println("Long range radio NOT working");
+    delay(1000);
+  }
+  while(!bmp280.begin()){
+    Serial.println("BMP NOT working 1");
+    delay(1000);
   }
 
 }
 
 void loop() {
-  Serial.println("Serial is working");
-  bmp388.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
-  bmp388.setPressureOversampling(BMP3_OVERSAMPLING_4X);
-  bmp388.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
-  bmp388.setOutputDataRate(BMP3_ODR_50_HZ);
+  Serial.println("Serial is still working");
 
-  if(!bmp388.performReading()){
-    Serial.println("Serial NOT working");
-    return;
-  }
+  Serial.println("Sending long range radio packet");
+
+  LoRa.beginPacket();
+  LoRa.print("test");
+  LoRa.endPacket();
 
   Serial.print("Temperatur: ");
-  Serial.print(bmp388.temperature);
+  Serial.print(bmp280.readTemperature());
   Serial.println(" C");
 
   Serial.print("Luftdruck: ");
-  Serial.print(bmp388.pressure / 100.0);
+  Serial.print(bmp280.readPressure() / 100.0);
   Serial.println(" hPa");
 
+  delay(1000);
 
 }

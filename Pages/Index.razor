@@ -3,7 +3,7 @@
 
 <PageTitle>Ground Control</PageTitle>
 
-<h1 style="color: grey;">Ground Control</h1>
+<h1 style="color: lightblue;">Ground Control</h1>
 <RadzenButton Text="STOP" Click="@onClick"></RadzenButton>
 
 <RadzenRow class="rz-text-align-center rz-border-info-light" Gap="1rem">
@@ -28,14 +28,19 @@
     </RadzenColumn>
 </RadzenRow>
 
-(@counting) - testdatalist: @foreach (var testD in testData)
+<p style="color: lightblue;">
+Countdown: @countDown
+(@counting)
+- testdatalist: @foreach (var testD in testData)
 {
     <span>[ @testD.Seconds :&nbsp; @testD.Value ]&nbsp;</span>
 }
+</p>
 
 @code {
     int counting = 0;
     RadzenChart testChart;
+    DateTime countDown = DateTime.Now;
     FlightDataItem[] testData = new FlightDataItem[3];
 
     public Index()
@@ -65,7 +70,6 @@
     private void MyMethod(object sender, ElapsedEventArgs evt){
             while (sec < 10)
             {
-                counting++;
                 sec++;
                 val += new Random().Next(10);
                 testData[2].Seconds = sec;
@@ -74,9 +78,12 @@
                 testChart.Reload();
                 testChart.Visible = true;
 
-                InvokeAsync(() => StateHasChanged());
-
             }
+
+            counting++;
+            countDown = DateTime.Now;
+            InvokeAsync(() => StateHasChanged());
+
     }
 
     public void Dispose()
