@@ -36,6 +36,10 @@ void loop() {
   Serial.print(bmp280.readPressure() / 100.0);
   Serial.println(" hPa");
 
+  Serial.print("Hoehe: ");
+  Serial.print(bmp280.readAltitude(1020.0)); // 1020 hPa ist der Luftdruck auf Meereshoehe
+  Serial.println(" m");
+
   delay(1000);
 
 }
