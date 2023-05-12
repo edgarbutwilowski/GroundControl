@@ -3,14 +3,22 @@
 
 <PageTitle>Ground Control</PageTitle>
 
-<h1 style="color: lightblue;">Ground Control</h1>
+<p style="color: lightblue;">
+    Countdown: @countDown
+    (@counting)
+    - testdatalist: @foreach (var testD in testData)
+    {
+        <span>[ @testD.Seconds :&nbsp; @testD.Pressure ]&nbsp;</span>
+    }
+</p>
+
 <RadzenButton Text="STOP" Click="@onClick"></RadzenButton>
 
 <RadzenRow class="rz-text-align-center rz-border-info-light" Gap="1rem">
     <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
         <p>Luftdruck (hPa)</p>
-        <RadzenChart @ref="testChart">
-            <RadzenLineSeries Data="@testData" ValueProperty="Value" CategoryProperty="Seconds"
+        <RadzenChart @ref="testChartPressure">
+            <RadzenLineSeries Data="@testData" ValueProperty="Pressure" CategoryProperty="Seconds"
                 LineType="LineType.Dashed" Smooth="true">
                 <RadzenMarkers MarkerType="MarkerType.Square" />
                 <RadzenSeriesDataLabels Visible="false" />
@@ -19,47 +27,68 @@
     </RadzenColumn>
     <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
         <p>Temperatur (°C)</p>
+        <RadzenChart @ref="testChartTemperature">
+            <RadzenLineSeries Data="@testData" ValueProperty="Temperature" CategoryProperty="Seconds"
+                LineType="LineType.Dashed" Smooth="true">
+                <RadzenMarkers MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="false" />
+            </RadzenLineSeries>
+        </RadzenChart>
     </RadzenColumn>
     <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
         <p>H&ouml;he &uuml;ber Boden (m)</p>
+        <RadzenChart @ref="testChartAltitude">
+            <RadzenLineSeries Data="@testData" ValueProperty="Altitude" CategoryProperty="Seconds"
+                LineType="LineType.Dashed" Smooth="true">
+                <RadzenMarkers MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="false" />
+            </RadzenLineSeries>
+        </RadzenChart>
     </RadzenColumn>
     <RadzenColumn Size="6" class="rz-background-color-info-lighter rz-color-info rz-p-5">
         <p>Aufstiegsgeschwindigkeit (km/h)</p>
+        <RadzenChart @ref="testChartVerticalSpeed">
+            <RadzenLineSeries Data="@testData" ValueProperty="VerticalSpeed" CategoryProperty="Seconds"
+                LineType="LineType.Dashed" Smooth="true">
+                <RadzenMarkers MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="false" />
+            </RadzenLineSeries>
+        </RadzenChart>
     </RadzenColumn>
 </RadzenRow>
 
-<p style="color: lightblue;">
-Countdown: @countDown
-(@counting)
-- testdatalist: @foreach (var testD in testData)
-{
-    <span>[ @testD.Seconds :&nbsp; @testD.Value ]&nbsp;</span>
-}
-</p>
-
 @code {
     int counting = 0;
-    RadzenChart testChart;
+    RadzenChart testChartPressure;
+    RadzenChart testChartTemperature;
+    RadzenChart testChartAltitude;
+    RadzenChart testChartVerticalSpeed;
     DateTime countDown = DateTime.Now;
-    FlightDataItem[] testData = new FlightDataItem[3];
+    FlightDataItem[] testData = new FlightDataItem[10];
 
     public Index()
     {
-        testData[0] = new FlightDataItem { Seconds = 1, Value = 4.0 };
-        testData[1] = new FlightDataItem { Seconds = 2, Value = 8.0 };
-        testData[2] = new FlightDataItem { Seconds = 3, Value = 10.0 };
+        for(int i = 0; i < testData.Length; i++)
+        {
+            testData[i] = new FlightDataItem
+            {
+                Seconds = i + 1,
+                Pressure = 0.0,
+                Temperature = 0.0,
+                Altitude = 0.0,
+                VerticalSpeed = 0.0
+            };
+        }
     }
-
-    int sec = 3;
-    double val = 10.0;
 
     private Timer t;
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if(firstRender){
+        if (firstRender)
+        {
             t = new Timer();
-            t.Interval = 500;
+            t.Interval = 2000;
             t.Elapsed += MyMethod;
             t.AutoReset = true;
             t.Enabled = true;
@@ -67,22 +96,31 @@ Countdown: @countDown
         base.OnAfterRender(firstRender);
     }
 
-    private void MyMethod(object sender, ElapsedEventArgs evt){
-            while (sec < 10)
-            {
-                sec++;
-                val += new Random().Next(10);
-                testData[2].Seconds = sec;
-                testData[2].Value = val;
+    private void MyMethod(object sender, ElapsedEventArgs evt)
+    {
+        FlightDataService.shiftArrayValues(testData);
+        FlightDataItem tempTestData = FlightDataService.GetNextDataItem();
+        testData[9].Seconds = tempTestData.Seconds;
+        testData[9].Pressure = tempTestData.Pressure;
+        testData[9].Temperature = tempTestData.Temperature;
+        testData[9].Altitude = tempTestData.Altitude;
+        testData[9].VerticalSpeed = tempTestData.VerticalSpeed;
 
-                testChart.Reload();
-                testChart.Visible = true;
+        testChartPressure.Reload();
+        testChartPressure.Visible = true;
 
-            }
+        testChartTemperature.Reload();
+        testChartTemperature.Visible = true;
 
-            counting++;
-            countDown = DateTime.Now;
-            InvokeAsync(() => StateHasChanged());
+        testChartAltitude.Reload();
+        testChartAltitude.Visible = true;
+
+        testChartVerticalSpeed.Reload();
+        testChartVerticalSpeed.Visible = true;
+
+        counting++;
+        countDown = DateTime.Now;
+        InvokeAsync(() => StateHasChanged());
 
     }
 
