@@ -1,8 +1,8 @@
-#include <Wire.h>
-#include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BMP3XX.h"
 #include <LoRa.h>
+
+byte destinationId = 0xCF;
 
 Adafruit_BMP3XX bmp388;
 
@@ -40,6 +40,7 @@ void loop()
   Serial.println("Sending long range radio packet");
 
   LoRa.beginPacket();
+  LoRa.write(destinationId);
   LoRa.print("test");
   LoRa.endPacket();
 
