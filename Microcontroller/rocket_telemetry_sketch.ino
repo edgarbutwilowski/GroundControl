@@ -63,3 +63,12 @@ void loop()
 
   delay(1000);
 }
+
+
+float calibrateAltitude(){
+  float averageAltitude = 0.0;
+  for(int i = 0; i < 10; i++){
+    averageAltitude += bmp388.readAltitude(1020.0); // 1020 hPa ist der Luftdruck auf Meereshoehe
+  }
+  return averageAltitude / 10;
+}
