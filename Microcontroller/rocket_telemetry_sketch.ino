@@ -36,9 +36,9 @@ void loop()
   LoRa.write(destinationId);
 
   LoRa.print(bmp388.temperature);
-  Serial.print(";");
+  LoRa.print(";");
   LoRa.print(bmp388.pressure);
-  Serial.println(";");
+  LoRa.print(";");
   LoRa.print(bmp388.readAltitude(1020.0)); // 1020 hPa ist der Luftdruck auf Meereshoehe
 
   LoRa.endPacket();
