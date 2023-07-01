@@ -3,7 +3,7 @@
 #include <LoRa.h>
 
 byte destinationId = 0xCF;
-float averageAltitude = 0.0;
+double averagePressure = 0.0;
 
 Adafruit_BMP3XX bmp388;
 
@@ -14,16 +14,15 @@ void setup()
   while (!bmp388.begin_I2C())
     delay(1000);
 
-  bmp388.setTemperatureOversampling(BMP3_OVERSAMPLING_8X);
-  bmp388.setPressureOversampling(BMP3_OVERSAMPLING_4X);
+  bmp388.setOutputDataRate(BMP3_ODR_25_HZ);
+  bmp388.setPressureOversampling(BMP3_NO_OVERSAMPLING);
   bmp388.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_3);
-  bmp388.setOutputDataRate(BMP3_ODR_50_HZ);
 
   while (!bmp388.performReading())
   {
   }
 
-  calibrateAltitude();
+  calibratePressure();
 }
 
 void loop()
@@ -35,22 +34,22 @@ void loop()
   LoRa.beginPacket();
   LoRa.write(destinationId);
 
-  LoRa.print(bmp388.temperature);
-  LoRa.print(";");
-  LoRa.print(bmp388.pressure);
-  LoRa.print(";");
-  LoRa.print(bmp388.readAltitude(1020.0)); // 1020 hPa ist der Luftdruck auf Meereshoehe
+  double altitude = (averagePressure - bmp388.pressure) / 8.0;
+  LoRa.print(altitude);
 
   LoRa.endPacket();
 
-  delay(500);
+  delay(100);
 }
 
-void calibrateAltitude()
+void calibratePressure()
 {
   for (int i = 0; i < 10; i++)
   {
-    averageAltitude += bmp388.readAltitude(1020.0); // 1020 hPa ist der Luftdruck auf Meereshoehe
+    while (!bmp388.performReading())
+    {
+    }
+    averagePressure += bmp388.pressure;
   }
-  averageAltitude = averageAltitude / 10;
+  averagePressure = averagePressure / 10;
 }
