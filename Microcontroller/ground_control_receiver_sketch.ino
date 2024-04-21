@@ -5,6 +5,7 @@ void setup()
     Serial.begin(115200);
     while (!Serial)
     {
+        delay(1000);
     }
     while (!LoRa.begin(868E6))
     {
@@ -34,4 +35,5 @@ void loop()
             Serial.println("ERR-2");
         }
     }
+    delay(200);
 }
