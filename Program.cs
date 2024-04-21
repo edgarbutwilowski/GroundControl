@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-var builder = WebApplication.CreateBuilder(args);
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 SerialReader.readSerial("COM5");
 
