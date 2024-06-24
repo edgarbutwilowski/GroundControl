@@ -1,2 +1,2 @@
-# GroundControl
-Control panel for model rocket telemetry
+# Project Ground Control
+Rocket firmware and ground control receiver for model rocket telemetry. Rocket firmware measures air pressure, calculates height and sends data to ground control. Ground control code receives telemetry data and prints data to console.
