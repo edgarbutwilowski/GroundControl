@@ -1,0 +1,46 @@
+= Raketen-Telemetrie für kleine Forscher
+
+**Berufe aus dem Bereich MINT (Mathematik, Informatik, Naturwissenschaften und Technik) sind gefragt. Arbeitnehmer mit MINT-Fähigkeiten haben selten Probleme, eine gute Anstellung zu finden, einige gründen sogar ihr eigenes Unternehmen. Der Sektor ist eine Zukunftsbranche, hat aber Nachwuchsprobleme. Doch wie lässt sich bei Kindern das Interesse für MINT wecken? Spannende Mitmachprojekte sind der Schlüssel. Gut vorbereitet, kann damit auf den bestehenden Interessen der Kinder aufgebaut werden, wie z.B. mit den Themen Weltraum und Raumfahrt. In diesem Blog-Beitrag stelle ich als Beispiel hierfür einen Workshop vor, in dem wir eine einfache Einsteiger-Modellrakete aus dem Markt verwenden und diese mit Sensor, Funksender und einem Mikrocontroller so erweitern, sodass wir die Höhe der Rakete vom Boden aus live mitverfolgen können.**
+
+Das klingt jetzt womöglich nach einem aufwändigen und schwierigen Vorhaben. Tatsächlich sollten die Inhalte auch ohne spezifisches Vorwissen recht gut zugänglich sein, mit der Ausnahme im Bereich der _Informatik_. Hier werden gewisse Vorkenntnisse vorausgesetzt. Doch genau hierbei kann dieser Workshop eine Stärke ausspielen. Er kann als _Motivator_ dienen, sich _ausdauernd_ diese Grundlagen zu erarbeiten, um schliesslich eine eigene Ground Control für Raketen zu bauen. Weiter unten werde ich auf die benötigten Voraussetzungen im Bereich der Informatik näher eingehen.
+
+Letztendlich kann Ihnen dieser Workshop auch viel Zeit sparen, denn die Inhalte sind praxiserprobt. Sie können sich also darauf verlassen, dass dieses Projekt tatsächlich funktioniert. Und das kann schon viel wert sein! Viele Design-Entscheidung, die sich erst im Praxistest als falsch erwiesen haben, sind hier bereits "ausgemerzt".
+
+== Die technischen Vorbilder
+Es kursieren viele verschiedene Namen für eine Ground Control, so z.B. auch "Mission Operations Control". Zur Einstimmung kommt hier ein Foto aus den NASA-Archiven des Jahres 1981 vom damaligen "Mission Operations Control Room", in dem die Landung des _Space Shuttle Columbia_ der historischen _STS-1-Mission_ überwacht wurde:
+
+image::fig/sts-1-mission.jfif["Mission Operations Control Room des Space Shuttle (1981), Bildquelle: NASA"]
+_Mission Operations Control Room des Space Shuttle (1981), Bildquelle: NASA_
+
+STS-1 war der erste Flug des _Space Shuttles_. Da kamen im Ground Control noch _Röhrenmonitore_, sowie echte Schalter und Knöpfe zum Einsatz. Trotz der grossen und sperrigen Arbeitskonsolen, war die darin befindliche Rechenleistung selbst im Vergleich zu heutigen Smartphones gering.
+
+Wie sah ein Ground Control einige Jahrzehnte später aus? Hier ein Foto des "Mission Control Center" der NASA _Expedition-42_ aus dem Jahr 2014:
+
+image::fig/console_flight_directors.jfif["Die Konsole des Flight Directors im Mission Control Center, Bildquelle: NASA"]
+_Die Konsole des Flight Directors im Mission Control Center, Bildquelle: NASA_
+
+Genau genommen wird hier von den Mission Operations Engineers der Moment mitverfolgt, in dem sich die _Soyuz_-Kapsel _TMA-14M_ von der _Internationalen Raumstation ISS_ abkoppelt. Mit einem Blick auf die Bildschirme lässt sich erahnen, dass da eine Menge Daten zusammenlaufen.
+
+Unser selbstgebasteltes Ground Control wird aus einem handelsüblichen Laptop und einigen _Arduino_-Komponenten bestehen.
+
+== Der didaktische Zauber und die Zutaten
+
+So viel als Appetizer, kommen wir zum methodischen Hintergrund. Was genau haben wir inhaltlich in diesem Workshop vor und was hat es mit MINT zu tun?
+
+Wir werden in diesem Projekt eine einfache, _handelsübliche Modellrakete_ nehmen und sie technisch aufwerten. Die Rakete hat im gekauften Zustand _keinerlei Sensorik_. So teilt einem die Rakete auch nicht mit, welche _Höhe_ sie überhaupt erreicht hat. Und das ist auch schon eines der Hauptprobleme. Denn wer schon mal eine Modellrakete gestartet hat, weiss, dass die erreichte Höhe der Rakete eine der wichtigsten Informationen ist. Wenn die _erreichte Höhe_ messbar ist, entsteht die grosse Motivation, das Raketendesign immer weiter zu verbessern, um die Flughöhe zu steigern.
+
+Nun gibt es eine weit verbreitete simple Verfahrensweise, um die erreichte Höhe zu bestimmen, nämlich über einen _Sextanten_. Mit Hilfe eines Sextanten wird vom Boden aus per Messung der _Winkeldistanz_ und mit Mitteln der _Triangulation_ die Höhe manuell errechnet. Diese Methodik ist im Hausgebrauch jedoch sehr ungenau, fehleranfällig und auch noch anstrengend. Der ideale Motivator also dies durch den Einsatz von Hightech zu verbessern.
+
+Wir wollen die erreichte Höhe mit MINT-Know-How wesentlich besser messen, nämlich _metergenau_ und _automatisiert_. Wir werden daher die Rakete mit mehreren Komponenten ausstatten, mit
+
+- einem _Sensor für Luftdruck_, sowie
+- einer _Funk-Antenne_ im UHF-Bereich (_Ultra High Frequency_), und
+- einem _Mikrocontroller_, der die oberen Komponenten informationstechnisch miteinander verbindet.
+
+Für den Mikrocontroller der Rakete werden wir eine _Firmware_ selbst programmieren. Die Rakete wird den Luftdruck messen und den daraus abgeleiteten Wert der Flughöhe per Funk an die Bodenstation senden.
+
+Die Bodenstation wiederum wird ein _handelsüblicher Laptop_ sein. Es sollte ein tragbarer Computer sein, da wir das System mit ins Feld nehmen wollen, dorthin wo die Rakete starten wird. Auch auf dem Laptop werden wir programmieren, und zwar eine Applikation, die die Sensordaten der Rakete empfängt und in einem Diagramm visualisiert (dies ist die Ground-Control-Komponente).
+
+> **Exkurs**: Es ist mir wichtig hervorzuheben, dass wir in diesem Projekt hauptsächlich **offene** Systeme verwenden werden. So benutzen wir als Mikrocontroller einen Arduino. Die Arduino-Plattform wird unter **Open-Hardware-** und **Open-Source-Lizenzen** bereitgestellt. Auch auf dem Laptop programmieren wir mit der quelloffenen Arduino IDE. Dies ist deshalb so wichtig, da **offene Plattformen** besonders wissensdurstige Bastler nicht ausbremsen. Sie geben ihnen die Möglichkeit, jederzeit noch tiefer "unter die Haube" schauen zu können, wenn der Bedarf besteht.
+
+Dieser Workshop hat in allen vier MINT-Bereichen etwas zu bieten. Bei der Umrechnung zwischen physikalischen Grössen kommt _Mathematik_ zum Einsatz. Die _Informatik_ wird zur Programmierung der Telemetrie-Prozesse benötigt. Die _Naturwissenschaften_ helfen, die physikalischen Modelle zu verstehen und in Bezug zu setzen. Beim Bauen der elektronischen Schaltungen kommt auch die _Technik_ nicht zu kurz.
