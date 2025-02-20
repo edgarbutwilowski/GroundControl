@@ -44,3 +44,72 @@ Die Bodenstation wiederum wird ein _handelsüblicher Laptop_ sein. Es sollte ein
 > **Exkurs**: Es ist mir wichtig hervorzuheben, dass wir in diesem Projekt hauptsächlich **offene** Systeme verwenden werden. So benutzen wir als Mikrocontroller einen Arduino. Die Arduino-Plattform wird unter **Open-Hardware-** und **Open-Source-Lizenzen** bereitgestellt. Auch auf dem Laptop programmieren wir mit der quelloffenen Arduino IDE. Dies ist deshalb so wichtig, da **offene Plattformen** besonders wissensdurstige Bastler nicht ausbremsen. Sie geben ihnen die Möglichkeit, jederzeit noch tiefer "unter die Haube" schauen zu können, wenn der Bedarf besteht.
 
 Dieser Workshop hat in allen vier MINT-Bereichen etwas zu bieten. Bei der Umrechnung zwischen physikalischen Grössen kommt _Mathematik_ zum Einsatz. Die _Informatik_ wird zur Programmierung der Telemetrie-Prozesse benötigt. Die _Naturwissenschaften_ helfen, die physikalischen Modelle zu verstehen und in Bezug zu setzen. Beim Bauen der elektronischen Schaltungen kommt auch die _Technik_ nicht zu kurz.
+
+Kommen wir nun zu den Grundlagen und zur Vorbereitung, die es für diesen Workshop braucht.
+
+**Vorkenntnisse**:
+
+- _Grundlegende Programmierung_ in C++
+- _Grundverständnis der Physik_ rund um _elektrische Ströme_ und _elektromagnetische Wellen_ (Optik)
+- Einfaches Löten (optional)
+
+Die Fähigkeiten in der Programmierung müssen für diesen Workshop nicht sehr ausgeprägt sein. Es reichen schon einige Grundlagen im Programmieren in der Sprache C++. Die Programmier-Themen _Datentypen_, _Kontrollstrukturen_ (Verzweigungen, Schleifen etc.) und _Objekt-Orientierung_ sollten zumindest grundlegend bekannt sein und praktisch angewendet werden können.
+
+**Einkaufsliste für das Projekt**:
+
+Kommen wir nun aber zu den Hardware-Zutaten, die wir für dieses Projekt benötigen. Und dies wäre die Einkaufsliste:
+
+- 2x Arduino MKR WAN 1310 (Stückpreis 40 CHF)
+- 1x Mini-Powerbank BioLite Charge 10 (15 CHF)
+- 3x USB-Kabel (2x zum Anschliessen der Arduinos, 1x zum Aufladen der Powerbank)
+- 2x Arduino Dipole Pentaband Waterproof Antenna (5 CHF)
+1x Luftdruck-Sensor Adafruit BMP388 (10 CHF)
+- 1x Pegasus Modellrakete Starter Set der Klima GmbH (70 CHF)
+- 1x Set Modellraketen-Motoren C6-5 (6 Stück für 23 CHF)
+- 1x Lötkolben und Lötzinn, oder alternativ:
+- 1x 0.2 ml Enson Silver Conductive Wire Glue (elektrisch leitfähiger Klebstoff)
+- Klebeband
+- 1x Laptop
+
+Ich gebe hier keine Links auf die Produkte an, da die Links schnell defekt sind. Eine Suchmaschine führt mit den oben angegebenen Bezeichnungen jedoch schnell zum Ziel.
+
+Bezüglich des Laptops gilt: Es muss kein Neugerät sein, ganz im Gegenteil, die Performance-Anforderungen sind verhältnismässig gering. Es sollte jedoch ein Laptop sein, kein Desktop-PC, da wir die Ground Control mit ins Feld nehmen werden. Die Beispiele in diesem Workshop sind unter _Windows 10_ ausgeführt worden, jedoch habe ich darauf geachtet, durchgehend System-übergreifende Software-Komponenten zu verwenden, sodass alle Beispiele genauso auch unter _Linux_ oder auf einem _Mac_ funktionieren sollten.
+
+In der Liste besonders hervorzuheben ist sicherlich die Rakete selbst, in diesem Fall die _Klima Pegasus_, die auf der Startrampe eine gute Figur macht:
+
+image::fig/klima_pegasus.png["Impressionen Pegasus-Set"]
+_Impressionen Pegasus-Set_
+
+Der Vorteil bei der Verwendung der ausgewählten Komponenten ist, dass die Abmessungen gut aufeinander abgestimmt sind. So passen der Arduino MKR WAN 1310, inkl. BioLite-Akku, Pentaband-Antenne und Luftdruck-Sensor BMP388 alle zusammen in den "Frachtraum" der Pegasus-Rakete.
+
+Sie sollten für diesen Workshop evtl. etwas mehr budgetieren, als oben aufgelistet ist, denn es sollte nicht verschwiegen werden, dass bei einem Raketenprojekt Dinge auch mal kaputt gehen können. Falls dann tatsächlich an Ihren Raketenbauteilen sich mal etwas in Rauch auflöst, denken Sie immer an ein Zitat des antiken Philosophen und Stoikers _Epiktet_:
+
+> Der Weg zum Glück besteht darin, sich um nichts zu sorgen, was sich unserem Einfluss entzieht.
+
+**Voraussetzungen bei der Software**:
+
+- Windows, Linux oder MacOS als Betriebssystem
+- Arduino IDE 2 (integrierte Entwicklungsumgebung für Arduino-Hardware)
+
+Dies sind die Software-Komponenten, die wir zur Entwicklung der Ground Control und der Sensor-Systeme benötigen. Für diesen Workshop sollte die _Arduino IDE_ auf dem Laptop/Computer installiert sein. Auch hier werde ich keinen Downloadlink angeben, da diese oft schnell "veralten". Mit Ihrer präferierten Suchmaschine sollte sich die Download-Seite aber schnell finden lassen.
+
+Wir benötigen die Arduino IDE als Entwicklungsumgebung für die Arduino-Plattform. Die Arduino IDE wird uns dabei unterstützen, Programmier-Code in einer stark an C++ angelehnten Sprache für die Arduino-Mikrocontroller zu schreiben und den kompilierten Code auf den Mikrocontroller zu übertragen.
+
+Es geht in der Arduino IDE ans "eingemachte", und wir programmieren _Firmware_ direkt für die Hardware. Die Firmware-Programmierung ist ein spezieller Bereich der Software-Entwicklung, in dem es darum geht, systemnah Funktionalität der Hardware als Treiber bereitzustellen. Also genau das, was wir für das Auslesen unserer Raketen-Sensoren benötigen.
+
+**Die Nutzlast der Rakete**
+
+Die _Payload Capacity_ (_Nutzlast_) der Rakete gibt an, welches Gewicht auf eine Rakete maximal zugeladen werden darf. Bei _SpaceX's Starship_, der bisher grössten gebauten Rakete, wird dieses z.B. mit _150 Tonnen_ angegeben.
+
+Wir ersparen uns an dieser Stelle die Berechnung der max. Nutzlast bei unserer Rakete, die zulässig ist, damit diese überhaupt abheben kann. Das Praxisexperiment wird schon zeigen, ob wir die Nutzlast mit unserer Zuladung überschreiten. Wir prüfen aber vorgängig, ob die geplante Zuladung für die Sensorik von den Abmessungen her überhaupt passt und protokollieren zumindest, welches Zusatzgewicht diese erzeugt.
+
+Der Frachtraum der Pegasus-Rakete hat einen Umfang von _35 mm_. Folgende Umfänge haben die Komponenten, die mitfliegen sollen:
+
+- Arduino MKR: _25 mm_
+- BMP388: _18 mm_
+- BioLite-Akku: _21 mm_
+- Pentaband-Antenne: _16 mm_
+
+Demnach passen alle Komponenten in den Frachtraum.
+
+Mit welchem Zusatzgewicht haben wir durch die Zuladung zu rechnen? Hierzu habe ich alle Komponenten gewogen, die in den Frachtraum kommen sollen. Dies ist das Ergebnis:
