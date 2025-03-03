@@ -113,3 +113,21 @@ Der Frachtraum der Pegasus-Rakete hat einen Umfang von _35 mm_. Folgende Umfäng
 Demnach passen alle Komponenten in den Frachtraum.
 
 Mit welchem Zusatzgewicht haben wir durch die Zuladung zu rechnen? Hierzu habe ich alle Komponenten gewogen, die in den Frachtraum kommen sollen. Dies ist das Ergebnis:
+
+.Gewichte der Zusatzbeladung
+|===
+| Komponente | Gewicht (g)
+
+| Akku | 93.44
+| Antenne | 6.9
+| Arduino | 11.3
+| BMP388 | 4.2
+|===
+
+Insgesamt ergibt sich eine Zusatzbeladung von _116 Gramm_ (_g_). Wie verhält sich das im Vergleich zum Leergewicht der Rakete? Die Pegasus-Rakete hat zusammen mit dem _C-6-5-Motor_ ein Leergewicht von _90.5 g_. Damit beträgt die Zuladung fast das _1.3-fache_ (oder _128 %_) des Leergewichts der Rakete. Wir bleiben aber trotzdem zuversichtlich, dass der _C-6-5_-Motor stark genug ist und die Rakete trotzdem abhebt.
+
+Das zusätzliche Gewicht wird die maximal erreichbare Flughöhe natürlich enorm verringern. Dies ist jedoch auch zunächst die erste (und einfachste) Iteration des Experiments. Ziel des ersten Versuchs ist es, festzustellen, ob so ein Aufbau auch in der Praxis grundsätzlich funktionieren kann. In darauf folgenden Iterationen kann dann das Gewicht optimiert werden, indem z.B. der Akku durch einen kleineren Energielieferanten ersetzt wird. Der Akku macht aktuell den Hauptteil des Gewichts aus und ist zugleich völlig "overpowered". Hier lässt es sich daher noch sehr gut einsparen.
+
+> **Exkurs**: Wir sind mit dieser Vorgehensweise bereits recht "agil" (nach "Agile"-Prinzip) unterwegs. "Agile" ist ein Entwicklungsprozess, der sich im Ingenieurwesen immer mehr durchsetzt. Ein zentrales Grundprinzip der Vorgehensweise ist es, möglichst früh zu Prototypen zu kommen, die dann in schnellen Iterationen, immer durch Praxistests begleitet, verbessert werden. Oberste Priorität hat es also, so früh wie möglich einen unter realen Bedingungen testbaren Kandidaten zu haben, selbst wenn dieser technisch noch "schlecht" sein mag. Grundgedanke hinter Agile: Bei einer Neuentwicklung ist die Praxis der beste Lehrmeister.
+
+Nun haben wir aber alle Zutaten zusammen, beginnen wir also mit dem Praktischen. Als erstes bauen wir unser Sensorsystem für die Rakete.
